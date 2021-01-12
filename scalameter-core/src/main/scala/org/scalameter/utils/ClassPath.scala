@@ -44,7 +44,7 @@ object ClassPath {
   }
 
   private def fromString(classPath: String): ClassPath = {
-    ClassPath(classPath.split(File.pathSeparator).map(new File(_)))
+    ClassPath(removeConflicts(classPath.split(File.pathSeparator).map(new File(_))))
   }
 
   /** Constructs [[ClassPath]] from given list of strings validating them first.
@@ -68,7 +68,7 @@ object ClassPath {
         fromString(sys.props("sun.boot.class.path"))
       case classloader =>
         ClassPath(
-          extractFileClasspaths(new ClassGraph().addClassLoader(classloader).getClasspathURIs().asScala.map(_.toURL)))
+          removeConflicts(extractFileClasspaths(new ClassGraph().addClassLoader(classloader).getClasspathURIs().asScala.map(_.toURL))))
     }
 
   private[scalameter] def extractFileClasspaths(urls: Seq[URL]): Seq[File] = {
@@ -76,5 +76,9 @@ object ClassPath {
     urls.map(s => URLDecoder.decode(s.toString, "UTF-8")) collect {
       case orig @ fileResource(file) => new File(file)
     }
+  }
+
+  private def removeConflicts(classpath: Seq[File]): Seq[File] = {
+    classpath.filterNot(_.getAbsolutePath().matches(".*\\bsbt\\b.*"))
   }
 }
