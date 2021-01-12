@@ -23,7 +23,7 @@ object Main {
 
   private def loadBody(file: File): () => Any = {
     val fis = new FileInputStream(file)
-    val ois = new ObjectInputStream(fis)
+    val ois = new ObjectInputStreamWithClassLoader(fis)
     try {
       ois.readObject().asInstanceOf[() => Any]
     } finally {

@@ -68,7 +68,7 @@ final class JvmRunner {
 
   private def readOutput[R](ctx: Context): Try[R] = {
     val fis = new FileInputStream(tmpfile)
-    val ois = new ObjectInputStream(fis)
+    val ois = new ObjectInputStreamWithClassLoader(fis)
     try {
       val cl = ctx(Key.finalClasspath)
       val result = ois.readObject()
