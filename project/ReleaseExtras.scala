@@ -8,6 +8,7 @@ import sbtrelease.ReleaseStateTransformations._
 import sbtrelease.Utilities._
 
 import scala.util.Random
+import scala.sys.process.{Process, ProcessBuilder}
 
 object ReleaseExtras {
   object ReleaseExtrasKeys {
@@ -131,13 +132,15 @@ object ReleaseExtras {
       st.log.info(s"Setting release version '$releaseV'")
       val filesWithReleaseV = setVersions(tmpDir, releaseV)
       examplesGit.add(filesWithReleaseV: _*) !! st.log
-      examplesGit.commit(commitMsg.format(releaseV), sign = false) !! st.log
+      examplesGit.commit(commitMsg.format(releaseV), sign = false, signOff = false) !! st.log
       examplesGit.tag(name = tag, comment = comment, sign = false) !! st.log
 
       st.log.info(s"Setting snapshot version '$nextV'")
       val filesWithNextV = setVersions(tmpDir, nextV)
       examplesGit.add(filesWithNextV: _*) !! st.log
-      examplesGit.commit(commitMsg.format(nextV), sign = false) !! st.log
+      examplesGit.commit(commitMsg.format(nextV), sign = false, signOff = false) !! st.log
+
+
 
       st.log.info(s"Starting pushing changes to $repo")
       pushChanges(examplesGit)

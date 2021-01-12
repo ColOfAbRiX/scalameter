@@ -6,6 +6,10 @@ tmp*
 
 *.*~
 .history
+.bloop
+.metals
+.vscode
+metals.sbt
 
 .classpath
 .project
